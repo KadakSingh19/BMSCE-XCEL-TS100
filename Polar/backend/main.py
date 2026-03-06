@@ -17,8 +17,8 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from Analysis_part import ResumeAnalysisPipeline
-from extract_info import JobDescriptionSkillExtractor
+from src.Analysis_part import ResumeAnalysisPipeline
+from src.extract_info import JobDescriptionSkillExtractor
 
 app = FastAPI(title="Resume Skill Extractor")
 

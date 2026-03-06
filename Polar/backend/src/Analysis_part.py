@@ -383,3 +383,97 @@ Return ONLY valid JSON:
     # ──────────────────────────────────────────────────────────────────────────
     # MAIN RUN
     # ──────────────────────────────────────────────────────────────────────────
+
+    async def run(
+        self,
+        resume_path: str,
+        jd_text: str,
+        key_skills: list[str],
+    ) -> dict:
+        """
+        Main entry point. Runs the full pipeline.
+
+        Args:
+            resume_path : path to PDF or DOCX file
+            jd_text     : full job description as plain text
+            key_skills  : list of skills manually extracted from JD
+                          e.g. ["Python", "AWS", "Docker", "SQL"]
+
+        Returns:
+            dict with all analysis results + final improved resume
+        """
+
+        # ── STEP 1: Extract resume text ──
+        print("📄 Extracting resume text...")
+        resume_text = self._extract_text(resume_path)
+
+        # ── STEP 2: Manual skill check (no LLM) ──
+        print("🔍 Running manual skill keyword check...")
+        manual_skills = self._manual_skill_check(resume_text, key_skills)
+
+        # ── STEP 3: Build shared input ──
+        chain_input = {
+            "resume_text": resume_text,
+            "jd_text":     jd_text,
+            "key_skills":  ", ".join(key_skills),
+        }
+
+        # ── STEP 4: Run 5 chains IN PARALLEL ──
+        print("🚀 Running 5 LLM chains in parallel...")
+
+        parallel_chain = RunnableParallel(
+            ats          = self._build_ats_chain(),
+            skill_gap    = self._build_skill_gap_chain(),
+            projects     = self._build_project_rating_chain(),
+            improvements = self._build_improvements_chain(),
+            next_domain  = self._build_next_domain_chain(),
+        )
+
+        parallel_results = await parallel_chain.ainvoke(chain_input)
+
+        print("✅ Parallel chains complete.")
+
+        # ── STEP 5: Build final resume (sequential — needs above results) ──
+        print("✍️  Generating final improved resume...")
+
+        # Extract useful context for final resume chain
+        ats_killers = json.dumps(
+            parallel_results["ats"].get("ats_killers", [])
+        )
+        missing_skills = json.dumps(
+            parallel_results["skill_gap"].get("hard_skills", {}).get("missing", [])
+            + parallel_results["skill_gap"].get("soft_skills", {}).get("missing", [])
+        )
+        project_improvements = json.dumps(
+            [p.get("improved_description", "") for p in parallel_results["projects"].get("projects", [])]
+        )
+        improvements = json.dumps(
+            parallel_results["improvements"].get("experience_bullets", [])
+        )
+
+        final_resume_result = await self._build_final_resume_chain().ainvoke({
+            "resume_text":          resume_text,
+            "jd_text":              jd_text,
+            "ats_killers":          ats_killers,
+            "missing_skills":       missing_skills,
+            "project_improvements": project_improvements,
+            "improvements":         improvements,
+        })
+
+        print("✅ Final resume generated.")
+
+        # ── STEP 6: Assemble unified result ──
+        return {
+            "metadata": {
+                "resume_file": os.path.basename(resume_path),
+                "model_used":  self.llm.model_name,
+            },
+            "manual_skill_check":  manual_skills,
+            "ats_analysis":        parallel_results["ats"],
+            "skill_gap":           parallel_results["skill_gap"],
+            "project_ratings":     parallel_results["projects"],
+            "resume_improvements": parallel_results["improvements"],
+            "next_domain_targets": parallel_results["next_domain"],
+            "final_resume":        final_resume_result,
+        }
+
