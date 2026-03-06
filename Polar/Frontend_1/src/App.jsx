@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
-import HomePage from ".src/HomePage.jsx";
-import AnalyzePage from ".src/AnalyzePage.jsx";
-import ResultsPage from ".src/ResultsPage.jsx";
+import HomePage from "./Homepage.jsx";
+import AnalyzePage from "./AnalyzePage.jsx";
+import ResultsPage from "./ResultsPage.jsx";
 
 export default function App() {
   return (
