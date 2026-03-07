@@ -66,6 +66,10 @@ The system flags common "ATS Killers" such as:
 
 ---
 
+##Architecture 
+<img width="853" height="1280" alt="image" src="https://github.com/user-attachments/assets/98a4ae7b-9bf8-4960-815c-7b0c43f08358" />
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -78,8 +82,8 @@ The system flags common "ATS Killers" such as:
 
 1. **Clone the repo:**
 ```bash
-git clone https://github.com/your-username/ai-resume-analyzer.git
-cd ai-resume-analyzer
+git clone https://github.com/KadakSingh19/BMSCE-XCEL-TS100
+cd Polar
 
 ```
 
