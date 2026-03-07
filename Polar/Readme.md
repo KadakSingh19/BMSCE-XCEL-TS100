@@ -1,130 +1,476 @@
+You want the README to actually describe the **real architecture** instead of the “toy pipeline” version you wrote. Good instinct. Right now your doc reads like a standard CRUD app with an LLM stapled to it. Your system is **parallel LLM analysis with result fusion**, which is far more interesting. So let’s document it properly.
+
+Here is a **clean, professional, architecture-accurate README** that reflects what your system actually does.
+
+---
+
 # 🚀 AI Resume Analyzer
 
-**Bridge the gap between raw talent and ATS algorithms.** The AI Resume Analyzer is a sophisticated pipeline that evaluates resumes against job descriptions (JD) using Large Language Models. It doesn't just "read" text; it performs structured extraction, identifies skill gaps, and provides actionable, quantified feedback to help candidates land interviews.
+**An intelligent resume optimization engine that evaluates candidates against job descriptions using parallel LLM analysis pipelines.**
+
+The AI Resume Analyzer bridges the gap between **candidate resumes and modern ATS systems** by performing deep semantic evaluation of resumes against job descriptions. Instead of a single monolithic AI call, the platform runs **multiple specialized LLM agents in parallel**, each responsible for analyzing a different dimension of the resume.
+
+The results are then **aggregated into a unified evaluation**, producing:
+
+* ATS compatibility score
+* Skill match analysis
+* Missing skill detection
+* Resume improvement suggestions
+* A **fully rewritten optimized resume**
 
 ---
 
-## 🌟 Key Features
+# 🌟 Core Features
 
-* **🔍 LLM-Powered Structured Extraction:** Converts unstructured PDF/DOCX data into clean, queryable JSON.
-* **⚖️ Skill Gap Analysis:** Automated comparison between candidate skills and JD requirements.
-* **📊 ATS Compatibility Scoring:** Evaluates resumes based on formatting, keyword density, and section headers.
-* **💡 Intelligent Rewriting:** Uses AI to transform weak bullet points into high-impact, quantified achievements.
-* **📄 Professional PDF Reports:** Generates a downloadable summary of the analysis for offline review.
+### 🔎 Multi-Agent LLM Analysis
 
----
+Instead of relying on a single prompt, the system launches **multiple parallel LLM pipelines**, each specialized for a specific analysis task:
 
-## 🛠️ Technology Stack
+| Agent                    | Responsibility                                                 |
+| ------------------------ | -------------------------------------------------------------- |
+| **Structure Agent**      | Extracts structured resume data (skills, experience, projects) |
+| **Skill Matching Agent** | Compares resume skills with JD requirements                    |
+| **ATS Agent**            | Evaluates formatting and ATS compatibility                     |
+| **Impact Agent**         | Detects weak bullet points lacking metrics                     |
+| **Rewrite Agent**        | Generates improved bullet points                               |
 
-| Layer | Technology | Purpose |
-| --- | --- | --- |
-| **Frontend** | React.js | Interactive dashboard & file upload |
-| **Backend** | FastAPI | High-performance asynchronous API |
-| **AI Engine** | OpenAI / Gemini API | LLM-based extraction & suggestions |
-| **Parsing** | pdfplumber / python-docx | Raw text extraction from documents |
-| **Report Gen** | ReportLab | Programmatic PDF generation |
+This approach significantly improves **accuracy, reasoning depth, and modularity**.
 
 ---
 
-## 🏗️ System Architecture
+### ⚙️ Parallel Processing Pipeline
 
-The system follows a linear, high-throughput pipeline designed for low latency and clear data separation:
+All LLM agents run **concurrently**, reducing latency while increasing analytical coverage.
 
-1. **Ingestion:** User uploads a document (PDF/DOCX) and pastes a Job Description.
-2. **Extraction:** `pdfplumber` extracts raw text; the LLM parses this into a structured schema (Skills, Experience, Projects).
-3. **Analysis Engine:**
-* **Matching:** Calculates match percentage using:
+Instead of:
 
-$$\text{Match Score} = \left( \frac{\text{Matched Skills}}{\text{Total Required Skills}} \right) \times 100$$
+```
+Resume → LLM → Result
+```
 
+The system executes:
 
-* **ATS Audit:** Checks for headers, contact info, and "parsability."
-
-
-4. **Optimization:** The LLM generates "Before/After" bullet points for resume sections.
-5. **Delivery:** Results are streamed to a React dashboard and optionally bundled into a PDF.
-
----
-
-## 📈 Analysis Logic
-
-### Skill Gap Analysis
-
-The engine identifies "Hard Skills" and "Soft Skills" missing from the resume.
-
-* **Input:** `Python, Docker, SQL`
-* **JD Requirement:** `Python, Docker, AWS, ML`
-* **Result:** ⚠️ **Missing:** `AWS, Machine Learning`
-
-### ATS Compatibility
-
-The system flags common "ATS Killers" such as:
-
-* Complex multi-column layouts.
-* Images/Icons replacing text.
-* Missing "Quantified Impact" (e.g., using "Worked on X" instead of "Increased X by 20%").
+```
+Resume + JD
+     │
+     ▼
+Parallel LLM Agents
+     │
+     ├── Skill Analyzer
+     ├── ATS Checker
+     ├── Experience Evaluator
+     ├── Bullet Optimizer
+     └── Resume Rewriter
+     │
+     ▼
+Result Aggregation Engine
+     │
+     ▼
+Unified Analysis + Optimized Resume
+```
 
 ---
 
-##Architecture 
+### 📊 Skill Gap Detection
+
+The analyzer compares resume skills with job description requirements.
+
+Example:
+
+**Resume Skills**
+
+```
+Python
+SQL
+Docker
+```
+
+**JD Skills**
+
+```
+Python
+SQL
+Docker
+AWS
+Machine Learning
+```
+
+**Output**
+
+```
+Matched Skills: Python, SQL, Docker
+Missing Skills: AWS, Machine Learning
+Match Score: 60%
+```
+
 ---
-<img width="853" height="1280" alt="image" src="https://github.com/user-attachments/assets/98a4ae7b-9bf8-4960-815c-7b0c43f08358" />
 
+### 📄 Intelligent Resume Rewriting
 
-## 🚀 Getting Started
+The system automatically converts weak statements into **quantified impact bullets**.
 
-### Prerequisites
+Example:
+
+**Before**
+
+```
+Worked on a machine learning model.
+```
+
+**After**
+
+```
+Developed a machine learning model that improved prediction accuracy by 18% using XGBoost and feature engineering.
+```
+
+---
+
+### 📈 ATS Compatibility Audit
+
+The system detects common issues that cause ATS rejection.
+
+Examples of flagged problems:
+
+* Multi-column layouts
+* Images or icons replacing text
+* Missing contact information
+* Poor section headers
+* Lack of measurable achievements
+
+---
+
+# 🏗️ System Architecture
+
+The platform follows a **modular AI pipeline architecture** designed for scalability and extensibility.
+
+## High-Level Architecture
+
+```
+Frontend (React)
+      │
+      ▼
+FastAPI Backend
+      │
+      ▼
+Resume Processing Pipeline
+      │
+      ├── Document Parsing Layer
+      │       ├── pdfplumber
+      │       └── python-docx
+      │
+      ├── Parallel LLM Agents
+      │       ├── Resume Structure Extraction
+      │       ├── Skill Matching
+      │       ├── ATS Compatibility Analysis
+      │       ├── Bullet Impact Analysis
+      │       └── Resume Rewriting
+      │
+      ├── Aggregation Engine
+      │
+      └── Final Resume Generator
+      │
+      ▼
+Results + Optimized Resume
+      │
+      ▼
+Frontend Dashboard
+```
+
+---
+
+# 🔄 Detailed Processing Pipeline
+
+### 1️⃣ Resume Upload
+
+The user uploads:
+
+* Resume (PDF / DOCX)
+* Job Description
+
+These inputs are sent from **React frontend → FastAPI backend**.
+
+---
+
+### 2️⃣ Document Parsing
+
+The backend extracts raw text.
+
+| Tool          | Purpose             |
+| ------------- | ------------------- |
+| `pdfplumber`  | PDF text extraction |
+| `python-docx` | DOCX parsing        |
+
+Output:
+
+```
+Raw Resume Text
+```
+
+---
+
+### 3️⃣ Structured Resume Extraction
+
+The first LLM agent converts raw text into structured JSON.
+
+Example output:
+
+```json
+{
+  "skills": ["Python", "SQL", "Docker"],
+  "experience": [
+    {
+      "role": "ML Intern",
+      "company": "XYZ",
+      "description": "Built ML models"
+    }
+  ],
+  "projects": ["Face Recognition System"]
+}
+```
+
+This structured data becomes the **shared input for all downstream agents**.
+
+---
+
+### 4️⃣ Parallel LLM Analysis
+
+Multiple LLM pipelines run **simultaneously**.
+
+#### Skill Matching Agent
+
+Evaluates overlap between resume skills and JD requirements.
+
+Formula used:
+
+[
+MatchScore = \frac{MatchedSkills}{TotalRequiredSkills} \times 100
+]
+
+---
+
+#### ATS Compatibility Agent
+
+Checks:
+
+* formatting structure
+* section headers
+* keyword density
+* ATS readability
+
+Outputs an **ATS score (0-100)**.
+
+---
+
+#### Impact Analysis Agent
+
+Detects weak statements such as:
+
+```
+Responsible for building APIs
+Worked on machine learning
+```
+
+and flags them for improvement.
+
+---
+
+#### Resume Rewrite Agent
+
+Uses JD context to generate:
+
+* improved bullet points
+* keyword alignment
+* quantified achievements
+
+---
+
+### 5️⃣ Result Aggregation
+
+Outputs from all LLM agents are merged into a **single unified analysis object**.
+
+Example structure:
+
+```json
+{
+  "match_score": 72,
+  "missing_skills": ["AWS", "Kubernetes"],
+  "ats_score": 81,
+  "weak_bullets": [...],
+  "improved_bullets": [...]
+}
+```
+
+---
+
+### 6️⃣ Optimized Resume Generation
+
+The system generates a **fully improved version of the resume**, integrating:
+
+* rewritten bullet points
+* missing keywords
+* improved structure
+
+---
+
+### 7️⃣ Delivery to Frontend
+
+The backend returns:
+
+```
+{
+  analysis,
+  optimized_resume,
+  ats_score,
+  skill_gap_report
+}
+```
+
+The React dashboard displays:
+
+* ATS Score
+* Skill Gap Analysis
+* Resume Improvements
+* Downloadable optimized resume
+
+---
+
+# 🛠️ Technology Stack
+
+| Layer       | Technology               | Role                       |
+| ----------- | ------------------------ | -------------------------- |
+| Frontend    | React.js                 | User interface & dashboard |
+| Backend     | FastAPI                  | High-performance API       |
+| AI Engine   | OpenAI / Gemini          | LLM reasoning              |
+| Parsing     | pdfplumber / python-docx | Document extraction        |
+| Concurrency | Async Python             | Parallel LLM execution     |
+| Reporting   | ReportLab                | PDF generation             |
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
 
 * Python 3.9+
-* Node.js & npm
-* API Key (OpenAI or Google Gemini)
+* Node.js
+* OpenAI or Gemini API Key
 
-### Installation
+---
 
-1. **Clone the repo:**
+## Clone Repository
+
 ```bash
 git clone https://github.com/KadakSingh19/BMSCE-XCEL-TS100
 cd Polar
-
 ```
 
+---
 
-2. **Setup Backend:**
+## Backend Setup
+
 ```bash
 cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
 
+pip install -r requirements.txt
+
+uvicorn main:app --reload
 ```
 
+---
 
-3. **Setup Frontend:**
+## Frontend Setup
+
 ```bash
 cd frontend
-npm install
-npm start
 
+npm install
+
+npm start
 ```
 
+---
 
+# 📊 Example Output
+
+```
+ATS Score: 82/100
+
+Skill Match: 68%
+
+Missing Skills:
+- AWS
+- Kubernetes
+- CI/CD
+
+Resume Improvements:
+- 7 weak bullet points rewritten
+- 5 JD keywords added
+- Impact metrics introduced
+```
 
 ---
 
-## 🗺️ Roadmap
+# 🗺️ Future Improvements
 
-* [ ] **Semantic Matching:** Use Vector Embeddings (ChromaDB) for context-aware skill matching.
-* [ ] **GitHub Integration:** Automatically fetch and evaluate project complexity via GitHub API.
-* [ ] **Learning Path:** Suggest specific Udemy/Coursera courses for identified skill gaps.
-* [ ] **Multi-Candidate Ranking:** Allow recruiters to upload a folder of resumes to find the best fit.
+### Semantic Skill Matching
+
+Integrate **vector embeddings** to detect skills semantically instead of exact keyword matching.
+
+Example:
+
+```
+Deep Learning ≈ Neural Networks
+```
+
+Possible tools:
+
+* ChromaDB
+* FAISS
 
 ---
 
-## 🤝 Contributing
+### GitHub Project Evaluation
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Use GitHub API to evaluate:
+
+* repository complexity
+* commit frequency
+* project scale
+
+and integrate into resume scoring.
 
 ---
 
-### 📝 License
+### Learning Recommendations
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Suggest **courses, resources, and projects** based on missing skills.
+
+Example:
+
+```
+Missing Skill: Kubernetes
+Recommendation: Kubernetes for Developers (Udemy)
+```
+
+---
+
+### Recruiter Mode
+
+Allow recruiters to upload **multiple resumes** and rank candidates automatically.
+
+---
+
+# 🤝 Contributing
+
+Pull requests are welcome.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Submit a pull request
+
+---
+
+# 📜 License
+
+MIT License
