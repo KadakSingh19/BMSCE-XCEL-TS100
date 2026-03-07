@@ -342,10 +342,10 @@ The React dashboard displays:
 | ----------- | ------------------------ | -------------------------- |
 | Frontend    | React.js                 | User interface & dashboard |
 | Backend     | FastAPI                  | High-performance API       |
-| AI Engine   | OpenAI / Gemini          | LLM reasoning              |
+| AI Engine   | Groq                     | LLM reasoning              |
 | Parsing     | pdfplumber / python-docx | Document extraction        |
 | Concurrency | Async Python             | Parallel LLM execution     |
-| Reporting   | ReportLab                | PDF generation             |
+
 
 ---
 
