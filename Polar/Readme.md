@@ -67,6 +67,7 @@ The system flags common "ATS Killers" such as:
 ---
 
 ##Architecture 
+---
 <img width="853" height="1280" alt="image" src="https://github.com/user-attachments/assets/98a4ae7b-9bf8-4960-815c-7b0c43f08358" />
 
 
